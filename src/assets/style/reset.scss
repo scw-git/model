@@ -1,0 +1,68 @@
+@charset "utf-8";
+/* css reset */
+*{
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body,div,ul,ol,li,dl,dd,dt,table,th,td,h1,h2,h3,h4,h5,h6,p,form,fieldset,legend,input,textarea,button,blockquote,pre,xmp{margin:0;padding:0}
+h1,h2,h3,h4,h5,h6,small,big,input,textarea,button,select{font-size:100%}
+h1,h2,h3,h4,h5,h6,b,strong{font-weight:normal}
+address,cite,dfn,em,i,optgroup,var{font-style:normal}
+table{border-collapse:collapse;border-spacing:0;text-align:left}
+ul,ol,menu{list-style:none}
+fieldset,img{border:0}
+img,object,input,textarea,button,select{vertical-align:middle}
+article,aside,footer,header,section,nav,figure,figcaption,hgroup,details,menu{display:block}
+audio,canvas,video{display:inline-block;*display:inline;*zoom:1}
+blockquote:before,blockquote:after,q:before,q:after{content:"\0020"}
+textarea{overflow:auto;resize:vertical}
+input,textarea,button,select,a{outline:0 none;border: none;}
+button::-moz-focus-inner,input::-moz-focus-inner{padding:0;border:0}
+a,ins,s,u,del{text-decoration:none}
+/* body,button,input,select,textarea{ font: normal 12px/100% "Microsoft Yahei", "Helvetica Neue",Helvetica, Arial, sans-serif;} */
+sup,sub{vertical-align:baseline}
+body,html{ width:100%; height: 100%;}
+html{ background-color: #f2f3f5; }
+a {color: #333;text-decoration: none;}
+
+/* 浮动 */
+.f-left{float:left;}
+.f-right{float:right;}
+/* 清除浮动 */
+.clear {zoom: 1; }
+.clear:after {
+  content: ".";
+  display: block;
+  height: 0;
+  font-size: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* 单行文字溢出隐藏 */
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 滚动条的样式 */
+// ::-webkit-scrollbar {
+//   width:8px;
+//   height: 8px
+// }
+// ::-webkit-scrollbar-track-piece {
+//   background-color: #f0f2f5;
+//   border-radius: 4px
+// }
+// ::-webkit-scrollbar-thumb:vertical {
+//   height: 32px;
+//   background-color: #c1c1c1;
+//   border-radius: 4px
+// }
+// ::-webkit-scrollbar-thumb:horizontal {
+//   width: 32px;
+//   background-color: #c1c1c1;
+//   border-radius: 4px
+// }
