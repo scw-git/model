@@ -125,6 +125,8 @@ instance.interceptors.response.use(
       return response;
     }
     const { data: dataBody } = response;
+    // console.log("dataBody", dataBody);
+    /*eslint no-console:0 */
 
     if (
       dataBody.status === undefined &&
@@ -132,9 +134,9 @@ instance.interceptors.response.use(
     )
       dataBody.status = dataBody.code;
     switch (dataBody.status) {
-      case 200:
+      case 1:
         return Promise.resolve(dataBody);
-      case 401:
+      case 0:
         errorShow(dataBody);
         return Promise.reject(dataBody);
       default:

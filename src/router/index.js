@@ -32,11 +32,11 @@ const routes = [
         name: "/factorAnalysis",
         component: () => import("../views/factorAnalysis")
       },
-      {
-        path: "/entropyMethod",
-        name: "/entropyMethod",
-        component: () => import("../views/entropyMethod")
-      },
+      // {
+      //   path: "/entropyMethod",
+      //   name: "/entropyMethod",
+      //   component: () => import("../views/entropyMethod")
+      // },
       {
         path: "/levelAnalysis",
         name: "/levelAnalysis",
@@ -46,7 +46,32 @@ const routes = [
         path: "/taskList",
         name: "/taskList",
         component: () => import("../views/taskList")
+      },
+
+      //模型分类
+      {
+        path: "/modType",
+        name: "/modType",
+        component: () => import("../views/modelType")
+      },
+      //模型列表
+      {
+        path: "/modList",
+        name: "/modList",
+        component: () => import("../views/modelList")
       }
+
+      //下面这些还没有重新整理
+      // {
+      //   path: "/editModal",
+      //   name: "/editModal",
+      //   component: () => import("../views/entropyMethod/editModal.vue")
+      // },
+      // {
+      //   path: "/editModal1",
+      //   name: "/editModal1",
+      //   component: () => import("../views/comAnalysis/editModal.vue")
+      // }
     ]
   }
 ];

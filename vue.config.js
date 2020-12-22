@@ -20,7 +20,7 @@ const vue_conf = {
 // const proxy_dev_url = "http://192.168.63.144:33335/";
 
 const proxy_dev_url = "http://10.0.40.19:80/";
-// const proxy_pay_url = "http://121.196.103.46:8080/";
+const proxy_test_url = "http://192.168.62.212:8888/";
 const configureWebpack = config => {
   if (IS_PROD) {
     // 优化打包
@@ -120,6 +120,13 @@ const devServer = {
       changeOrigin: true,
       pathRewrite: {
         "^/consumer": "/consumer"
+      }
+    },
+    "/model": {
+      target: proxy_test_url,
+      changeOrigin: true,
+      pathRewrite: {
+        "^/model": "/model"
       }
     }
   }

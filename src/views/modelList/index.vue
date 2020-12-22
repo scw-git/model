@@ -1,59 +1,63 @@
 <template>
-  <div class="com-analysis-wrap">
+  <div class="model-analysis-wrap">
+    <!-- 头部区域 -->
     <div class="table-search-header">
-      <a-row>
-        <span>主成分析列表</span>
-      </a-row>
-      <a-row>
-        <a-col :span="6">
-          <div class="search-item">
-            <span class="label">模型名称：</span>
-            <div class="val">
-              <a-input
-                v-model="searchForm.name"
-                placeholder="请输入模型名称"
-                autocomplete="off"
-              ></a-input>
+      <a-row class="header-row">
+        <a-row>
+          <span class="top-title">模型列表</span>
+        </a-row>
+        <a-row>
+          <a-col :span="6">
+            <div class="search-item">
+              <span class="label">模型名称：</span>
+              <div class="val">
+                <a-input
+                  v-model="searchForm.name"
+                  placeholder="请输入模型名称"
+                  autocomplete="off"
+                ></a-input>
+              </div>
             </div>
-          </div>
-        </a-col>
-        <a-col :span="10">
-          <div class="search-item">
-            <span class="label">状态：</span>
-            <div class="val">
-              <a-checkbox-group v-model="searchForm.status">
-                <a-checkbox
-                  :value="item.value"
-                  v-for="item in statusList"
-                  :key="item.value"
-                >
-                  {{ item.label }}
-                </a-checkbox>
-              </a-checkbox-group>
+          </a-col>
+          <a-col :span="10">
+            <div class="search-item">
+              <span class="label">状态：</span>
+              <div class="val">
+                <a-checkbox-group v-model="searchForm.status">
+                  <a-checkbox
+                    :value="item.value"
+                    v-for="item in statusList"
+                    :key="item.value"
+                  >
+                    {{ item.label }}
+                  </a-checkbox>
+                </a-checkbox-group>
+              </div>
             </div>
-          </div>
-        </a-col>
-        <a-col :span="8">
-          <div class="btn-list">
-            <a-button type="primary" @click="handleSearch"
-              ><a-icon type="search" />查询</a-button
-            >
-            <a-button
-              type="primary"
-              style="background-color:#fff;color:#1c84c6"
-              @click="handleReset"
-              ><a-icon type="sync" />重置</a-button
-            >
-            <a-button
-              type="primary"
-              style="background-color:#f7a54a;border:none"
-              @click="handleAdd"
-              ><a-icon type="plus" />新增</a-button
-            >
-          </div>
-        </a-col>
+          </a-col>
+          <a-col :span="8">
+            <div class="btn-list">
+              <a-button type="primary" @click="handleSearch"
+                ><a-icon type="search" />查询</a-button
+              >
+              <a-button
+                type="primary"
+                style="background-color:#fff;color:#1c84c6"
+                @click="handleReset"
+                ><a-icon type="sync" />重置</a-button
+              >
+              <a-button
+                type="primary"
+                style="background-color:#f7a54a;border:none"
+                @click="handleAdd"
+                ><a-icon type="plus" />新增</a-button
+              >
+            </div>
+          </a-col>
+        </a-row>
       </a-row>
     </div>
+    <!-- 展示列表 -->
     <div class="table-list-body">
       <a-table
         :loading="loading"
@@ -100,6 +104,8 @@
         </a-table-column>
       </a-table>
     </div>
+    <!-- 新增抽屉组件 -->
+    <addModal ref="addModal" :id="id"></addModal>
   </div>
 </template>
 <script>
@@ -107,11 +113,16 @@ import {
   get_compute_status as computeStatus,
   compute_status as statusList
 } from "@/constant/status";
+import addModal from "@/views/modelList/modal/addModal";
 export default {
   data() {
     return {
+      id: "", //点击修改按钮时传进子组件，让子组件获取通过id获取信息
+      //表格默认不加载
       loading: false,
+      //表格无数据显示
       locale: { emptyText: "暂无数据" },
+      //表格数据
       tableData: [
         {
           id: 0,
@@ -138,46 +149,51 @@ export default {
           time: "2020-12-16"
         }
       ],
+      //分页器
       pagination: {
         pageNow: 1,
         pageSize: 10,
         total: 0,
         showTotal: total => `共有 ${total}条`
       },
-      spinning: false,
+      //状态列表
       statusList,
+      //搜素表单
       searchForm: {
         name: "",
         status: []
       }
     };
   },
+  components: {
+    addModal
+  },
   filters: {
     computeStatus
   },
   methods: {
+    //分页改变
     changePag(val) {
       if (val.pageNow !== val.current) {
         this.pagination.pageNow = val.current;
         this.getDataList();
       }
     },
+    //查询按钮
     handleSearch() {},
+    //重置按钮
     handleReset() {},
     //新增按钮
     handleAdd() {
-      this.$router.push({
-        path: "/editModal1"
-      });
+      //打开抽屉
+      this.$refs.addModal.handleOpen();
     },
     //获取表格列表数据
     getDataList() {},
+    //修改
     handleRowEdit(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-      this.$router.push({
-        path: "/editModal1"
-      });
+      this.id = id;
+      this.handleAdd();
     },
     //运算
     handleRowCal(id) {
@@ -215,7 +231,7 @@ export default {
       });
     },
     //删除
-    handleRowEDel(id) {
+    handleRowDel(id) {
       /*eslint no-console:0 */
       console.log(id);
       this.$confirm({
@@ -231,6 +247,19 @@ export default {
 };
 </script>
 <style lang="scss">
-.com-analysis-wrap {
+.model-analysis-wrap {
+  .table-search-header {
+    .header-row {
+      border-left: 4px solid #c2c2c2;
+      background-color: #f5f5f5;
+      padding: 5px;
+      .top-title {
+        padding-top: 5px;
+        font-size: 18px;
+        color: #676a6c;
+        font-weight: 700;
+      }
+    }
+  }
 }
 </style>
