@@ -131,17 +131,12 @@ export default {
             enabled: this.form.enabled ? 1 : 0,
             name: this.form.name
           };
-          this.$http.addTypeData(params).then(
-            res => {
-              if (res.code === 1) {
-                this.$message.success("添加成功");
-                this.resetForm();
-              }
-            },
-            err => {
-              return this.$message.error("添加失败");
+          this.$http.addTypeData(params).then(res => {
+            if (res.code === 1) {
+              this.$message.success("添加成功");
+              this.resetForm();
             }
-          );
+          });
         } else {
           return false;
         }
@@ -164,7 +159,4 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-.modalManage-add-view {
-}
-</style>
+<style lang="scss"></style>

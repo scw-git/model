@@ -26,7 +26,10 @@
         <a-icon type="calendar" />
         任务列表
       </a-menu-item>
-
+      <a-menu-item key="/indicatorsList">
+        <a-icon type="calendar" />
+        指标列表
+      </a-menu-item>
       <a-sub-menu key="/modType">
         <span slot="title"
           ><a-icon type="appstore" /><span>模型管理</span></span

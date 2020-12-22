@@ -60,7 +60,7 @@ export default {
   props: {
     checkedList: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data() {
@@ -111,7 +111,6 @@ export default {
       } else {
         this.checkedList.push(id);
       }
-      //    this.$emit("updateList", this.checkedList);
     }
   },
   computed: {
@@ -125,7 +124,4 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-.relevance-modal-view {
-}
-</style>
+<style lang="scss"></style>

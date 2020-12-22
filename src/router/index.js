@@ -59,6 +59,17 @@ const routes = [
         path: "/modList",
         name: "/modList",
         component: () => import("../views/modelList")
+      },
+      // 指标列表
+      {
+        path: "/indicatorsList",
+        name: "/indicatorsList",
+        component: () => import("../views/indicatorsList")
+      },
+      {
+        path: "/indicatorsList/addIndicators",
+        name: "/addIndicators",
+        component: () => import("../views/indicatorsList/addIndicators")
       }
 
       //下面这些还没有重新整理
