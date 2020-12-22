@@ -1,9 +1,9 @@
 <template>
   <div class="left-menu-list">
     <a-menu
-      mode="vertical"
+      mode="inline"
       theme="dark"
-      :default-selected-keys="['/comAnalysis']"
+      :selectedKeys="selKey"
       @click="handleClick"
     >
       <a-menu-item key="/comAnalysis">
@@ -26,16 +26,32 @@
         <a-icon type="calendar" />
         任务列表
       </a-menu-item>
+
+      <a-sub-menu key="/modType">
+        <span slot="title"
+          ><a-icon type="appstore" /><span>模型管理</span></span
+        >
+        <a-menu-item key="/modType">
+          <a-icon type="calendar" /> 模型分类
+        </a-menu-item>
+        <a-menu-item key="/modList">
+          <a-icon type="calendar" />
+          模型列表
+        </a-menu-item>
+      </a-sub-menu>
     </a-menu>
   </div>
 </template>
 <script>
 export default {
   data() {
-    return {};
+    return {
+      selKey: ["/comAnalysis"]
+    };
   },
   methods: {
     handleClick({ key }) {
+      this.selKey = [key];
       /*eslint no-console:0 */
       // console.log("key", key);
       this.$router.push({

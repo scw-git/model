@@ -1,6 +1,6 @@
 const path = require("path");
 
-const resolve = (dir) => path.join(__dirname, dir);
+const resolve = dir => path.join(__dirname, dir);
 const Env = process.env.NODE_ENV;
 const IS_PROD = ["production", "prod"].includes(Env);
 
@@ -13,7 +13,7 @@ const vue_conf = {
   indexPath: "index.html", // 指定生成的 index.html 的输出路径
   filenameHashing: true, // 静态文件生成hash名称
   lintOnSave: true, // 开发模式下每次保存时lint代码
-  productionSourceMap: !IS_PROD, // 生产环境是否生成 sourceMap 文件
+  productionSourceMap: !IS_PROD // 生产环境是否生成 sourceMap 文件
 };
 
 // const proxy_dev_url = "http://192.168.62.222:33335/";
@@ -21,7 +21,7 @@ const vue_conf = {
 
 // const proxy_dev_url = "http://10.0.40.19:80/";
 // const proxy_pay_url = "http://121.196.103.46:8080/";
-const configureWebpack = (config) => {
+const configureWebpack = config => {
   if (IS_PROD) {
     // 优化打包
     config.optimization = {
@@ -32,7 +32,7 @@ const configureWebpack = (config) => {
             chunks: "initial",
             minChunks: 2,
             priority: 0,
-            reuseExistingChunk: true,
+            reuseExistingChunk: true
           },
           commons: {
             name: "chunk-common",
@@ -41,7 +41,7 @@ const configureWebpack = (config) => {
             maxInitialRequests: 5, //在一个入口中的最大并行请求数
             priority: 1, // 缓存组优先级
             reuseExistingChunk: true, //重用现有chunk
-            enforce: true,
+            enforce: true
           },
           vendors: {
             name: "chunk-vendors",
@@ -49,7 +49,7 @@ const configureWebpack = (config) => {
             chunks: "initial",
             priority: 2,
             reuseExistingChunk: true,
-            enforce: true,
+            enforce: true
           },
           elementUI: {
             name: "chunk-elementui",
@@ -57,7 +57,7 @@ const configureWebpack = (config) => {
             chunks: "initial",
             priority: 3,
             reuseExistingChunk: true,
-            enforce: true,
+            enforce: true
           },
           echarts: {
             name: "chunk-echarts",
@@ -65,10 +65,10 @@ const configureWebpack = (config) => {
             chunks: "initial",
             priority: 4,
             reuseExistingChunk: true,
-            enforce: true,
-          },
-        },
-      },
+            enforce: true
+          }
+        }
+      }
     };
 
     // 性能
@@ -76,14 +76,14 @@ const configureWebpack = (config) => {
       hints: process.env.NODE_ENV === "production" ? false : "warning",
       maxEntrypointSize: 400000,
       maxAssetSize: 250000,
-      assetFilter: (assetFilename) => {
+      assetFilter: assetFilename => {
         return !/\.map$/.test(assetFilename);
-      },
+      }
     };
   }
 };
 
-const chainWebpack = (config) => {
+const chainWebpack = config => {
   // 删除懒加载模块的 prefetch preload，降低带宽压力
   config.plugins.delete("prefetch").delete("preload");
 
@@ -119,10 +119,10 @@ const devServer = {
       target: proxy_dev_url,
       changeOrigin: true,
       pathRewrite: {
-        "^/consumer": "/consumer",
-      },
-    },
-  },
+        "^/consumer": "/consumer"
+      }
+    }
+  }
 };
 
 module.exports = {
@@ -134,11 +134,11 @@ module.exports = {
         //设置style公用变量文件，在 sass-loader v7 中，这个选项名是 "data"
         prependData: `
         @import '~@/assets/style/index.scss';
-        `,
-      },
-    },
+        `
+      }
+    }
   },
   configureWebpack,
   chainWebpack,
-  devServer,
+  devServer
 };
