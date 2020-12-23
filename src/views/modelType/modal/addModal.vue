@@ -27,14 +27,14 @@
               "
             />
           </a-form-model-item>
-          <a-form-model-item label="类型编码" prop="type" ref="type">
+          <a-form-model-item label="类型编码" prop="code" ref="code">
             <a-input
               placeholder="请输入类型编码(只能含有字母数字)"
-              v-model="form.type"
+              v-model="form.code"
               :disabled="form.id ? true : false"
               @blur="
                 () => {
-                  $refs.type.onFieldBlur();
+                  $refs.code.onFieldBlur();
                 }
               "
             />
@@ -43,7 +43,7 @@
           <a-form-model-item label="描述" prop="desc">
             <a-input v-model="form.desc" type="textarea" />
           </a-form-model-item>
-          <a-form-model-item label="是否开启" prop="enabled">
+          <a-form-model-item label="是否开启">
             <a-switch
               checked-children="已开启"
               un-checked-children="已关闭"
@@ -66,7 +66,7 @@
             <a-button v-if="this.form.id" @click="onClose">
               关闭
             </a-button>
-            <a-button v-else @click="resetForm">
+            <a-button v-else @click="resetForm('ruleForm')">
               重置
             </a-button>
           </a-form-model-item>
@@ -88,7 +88,7 @@ export default {
       //表单提交字段
       form: {
         name: "",
-        type: "",
+        code: "",
         enabled: true,
         desc: ""
       },
@@ -103,7 +103,7 @@ export default {
             trigger: "blur"
           }
         ],
-        type: [
+        code: [
           {
             required: true,
             message: "请输入类型编码(只能含有字母数字)",
@@ -124,7 +124,7 @@ export default {
         this.form.enabled = data.enabled === 1 ? true : false;
       } else {
         this.title = "新增";
-        this.resetForm();
+        this.resetForm("ruleForm");
       }
       this.visible = true;
     },
@@ -137,7 +137,7 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           let params = {
-            code: this.form.type,
+            code: this.form.code,
             desc: this.form.desc,
             enabled: this.form.enabled ? 1 : 0,
             name: this.form.name
@@ -172,8 +172,9 @@ export default {
       });
     },
     //表单重置
-    resetForm() {
-      this.$refs.ruleForm.resetFields();
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.form.id = "";
     }
   }
 };

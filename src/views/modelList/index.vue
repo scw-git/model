@@ -78,16 +78,25 @@
           </template>
         </a-table-column>
         <a-table-column title="模型名称" data-index="name" />
-        <a-table-column title="状态" width="200px">
-          <template slot-scope="record">
-            {{ record.status | computeStatus }}
-          </template>
+        <a-table-column title="类型编码" width="200px" data-index="typeCode" />
+        <a-table-column title="范围编码" width="200px" data-index="rangCode" />
+        <a-table-column title="描述" width="200px" data-index="desc">
         </a-table-column>
         <a-table-column
-          title="上一次运行时间"
+          title="更新时间"
           width="250px"
-          data-index="time"
+          data-index="updateTime"
         />
+        <a-table-column
+          title="创建时间"
+          width="250px"
+          data-index="createTime"
+        />
+        <a-table-column key="zhibiao" title="关联指标id" width="300px">
+          <template slot-scope="record">
+            {{ record.computerResultTable }}
+          </template>
+        </a-table-column>
         <a-table-column key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
@@ -123,32 +132,7 @@ export default {
       //表格无数据显示
       locale: { emptyText: "暂无数据" },
       //表格数据
-      tableData: [
-        {
-          id: 0,
-          name: "模型测试1",
-          status: 0,
-          time: "2020-12-15"
-        },
-        {
-          id: 1,
-          name: "模型测试2",
-          status: 1,
-          time: "2020-12-16"
-        },
-        {
-          id: 2,
-          name: "模型测试3",
-          status: 2,
-          time: "2020-12-16"
-        },
-        {
-          id: 3,
-          name: "模型测试4",
-          status: 3,
-          time: "2020-12-16"
-        }
-      ],
+      tableData: [],
       //分页器
       pagination: {
         pageNow: 1,

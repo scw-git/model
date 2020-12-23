@@ -56,7 +56,7 @@
               <a-button
                 type="primary"
                 style="background-color:#f7a54a;border:none"
-                @click="handleOpen"
+                @click="handleOpen('')"
                 ><a-icon type="plus" />新增</a-button
               >
             </div>
@@ -223,6 +223,7 @@ export default {
     },
     //修改
     handleOpen(record) {
+      console.log(record);
       this.$refs.addModal.handleOpen(record);
     },
     //删除
