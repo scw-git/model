@@ -3,7 +3,7 @@
   <div class="level-analysis-wrap">
     <div class="table-search-header">
       <a-row>
-        <a-col :span="16">
+        <!-- <a-col :span="16">
           <div class="search-item">
             <span class="label">模型名称：</span>
             <div class="val">
@@ -15,11 +15,20 @@
             </div>
           </div>
         </a-col>
-
         <a-col :span="8">
           <div class="btn-list">
             <a-button type="primary" @click="handleAdd">新增</a-button>
           </div>
+        </a-col> -->
+        <a-col :span="6">
+          <a-button type="primary" @click="handleAdd">新增</a-button>
+        </a-col>
+        <a-col :span="18">
+          <TableSearch
+            placeholder="请输入模型名称"
+            v-model="searchForm.name"
+            @handleSearch="handleSearch"
+          />
         </a-col>
       </a-row>
     </div>
@@ -77,12 +86,16 @@
   </div>
 </template>
 <script>
+import TableSearch from "@/components/commom/TableSearch";
 import {
   get_compute_status as computeStatus,
   compute_status as statusList
 } from "@/constant/status";
 
 export default {
+  components: {
+    TableSearch
+  },
   data() {
     return {
       loading: false,

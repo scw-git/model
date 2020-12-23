@@ -7,7 +7,7 @@
         </a-col>
         <a-col :span="8">
           <TableSearch
-            placeholder="请输入关键词"
+            placeholder="请输入指标名称"
             v-model="searchValue"
             @handleSearch="handleSearch"
           />

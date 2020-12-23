@@ -55,7 +55,7 @@ export default {
         if (valid) {
           /*eslint no-console:0 */
           this.$router.push({
-            path: "/comAnalysis"
+            path: "/taskList"
           });
         } else {
           return false;

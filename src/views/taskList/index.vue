@@ -40,7 +40,7 @@
         <a-table-column key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
-              <a href="javascript:;" @click="handleRowEdit(record.id)">修改</a>
+              <a href="javascript:;" @click="handleRowEdit(record)">修改</a>
               <a href="javascript:;" @click="handleRowCal(record.id)">运算</a>
               <a href="javascript:;" @click="handleRowExport(record.id)"
                 >导出运算结果</a
@@ -126,12 +126,8 @@ export default {
     //获取表格列表数据
     getDataList() {},
     //修改
-    handleRowEdit(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-      this.$router.push({
-        path: "/editModal"
-      });
+    handleRowEdit(data) {
+      this.$refs.taskModal.handleOpen(data);
     },
     //运算
     handleRowCal(id) {

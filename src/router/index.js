@@ -23,26 +23,6 @@ const routes = [
     redirect: "/comAnalysis",
     children: [
       {
-        path: "/comAnalysis",
-        name: "/comAnalysis",
-        component: () => import("../views/comAnalysis")
-      },
-      {
-        path: "/factorAnalysis",
-        name: "/factorAnalysis",
-        component: () => import("../views/factorAnalysis")
-      },
-      // {
-      //   path: "/entropyMethod",
-      //   name: "/entropyMethod",
-      //   component: () => import("../views/entropyMethod")
-      // },
-      {
-        path: "/levelAnalysis",
-        name: "/levelAnalysis",
-        component: () => import("../views/levelAnalysis")
-      },
-      {
         path: "/taskList",
         name: "/taskList",
         component: () => import("../views/taskList")
@@ -81,17 +61,6 @@ const routes = [
         name: "dimensionCreateAndEdit",
         component: () => import("../views/dimension/createAndEdit.vue")
       }
-      //下面这些还没有重新整理
-      // {
-      //   path: "/editModal",
-      //   name: "/editModal",
-      //   component: () => import("../views/entropyMethod/editModal.vue")
-      // },
-      // {
-      //   path: "/editModal1",
-      //   name: "/editModal1",
-      //   component: () => import("../views/comAnalysis/editModal.vue")
-      // }
     ]
   }
 ];

@@ -16,7 +16,7 @@ const vue_conf = {
   productionSourceMap: !IS_PROD // 生产环境是否生成 sourceMap 文件
 };
 
-const proxy_dev_url = "http://192.168.63.34:8888/";
+const proxy_dev_url = "http://10.0.40.19:80/";
 
 const configureWebpack = config => {
   if (IS_PROD) {
