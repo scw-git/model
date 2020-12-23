@@ -71,7 +71,7 @@
             <a-button v-if="this.form.id" @click="onClose">
               关闭
             </a-button>
-            <a-button v-else @click="resetForm('ruleForm')">
+            <a-button v-else @click="resetForm">
               重置
             </a-button>
           </a-form-model-item>
@@ -128,6 +128,7 @@ export default {
         this.title = "修改";
         this.form.enabled = data.enabled === 1 ? true : false;
       } else {
+        this.form = {};
         this.title = "新增";
       }
       this.visible = true;
@@ -176,9 +177,8 @@ export default {
       });
     },
     //表单重置
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.form.id = "";
+    resetForm() {
+      this.$refs.ruleForm.resetFields();
     }
   }
 };
