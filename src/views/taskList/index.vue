@@ -40,14 +40,19 @@
         <a-table-column key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
-              <a href="javascript:;" @click="handleRowEdit(record)">修改</a>
-              <a href="javascript:;" @click="handleRowCal(record.id)">运算</a>
-              <a href="javascript:;" @click="handleRowExport(record.id)"
-                >导出运算结果</a
+              <a @click="handleRowEdit(record)">修改</a>
+              <a @click="handleRowCal(record.id)">运算</a>
+              <a @click="handleRowExport(record.id)">导出运算结果</a>
+              <a @click="handleOperate(record.name, 'startJob', '启用')"
+                >启用</a
               >
-              <a href="javascript:;" @click="handleRowStart(record.id)">启用</a>
-              <a href="javascript:;" @click="handleRowStop(record.id)">停用</a>
-              <a href="javascript:;" @click="handleRowDel(record.id)">删除</a>
+              <a @click="handleOperate(record.name, 'pauseJob', '暂停')"
+                >停用</a
+              >
+              <!-- <a href="javascript:;" @click="handleRowStop(record.name,'pauseJob')">停用</a> -->
+              <a @click="handleOperate(record.name, 'deleteJob', '删除')"
+                >删除</a
+              >
             </div>
           </template>
         </a-table-column>
@@ -140,41 +145,22 @@ export default {
       console.log(id);
     },
     //启用
-    handleRowStart(id) {
-      console.log(id);
-      this.$confirm({
+    handleOperate(jobName, method, type) {
+      let _this = this;
+      _this.$confirm({
         title: "系统提示",
-        content: "确定启用吗?",
+        content: "确定" + type + "吗?",
+        okText: "确定",
+        cancelText: "取消",
         onOk() {
-          console.log(id);
-        },
-        onCancel() {}
-      });
-    },
-    //停用
-    handleRowStop(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-      this.$confirm({
-        title: "系统提示",
-        content: "确定停用吗?",
-        onOk() {
-          console.log(id);
-        },
-        onCancel() {}
-      });
-    },
-    //删除
-    handleRowDel(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-      this.$confirm({
-        title: "系统提示",
-        content: "确定删除吗?",
-        onOk() {
-          console.log(id);
-        },
-        onCancel() {}
+          let params = {
+            emulateJSON: true,
+            jobName
+          };
+          _this.$http[method](params).then(res => {
+            console.log("res", res);
+          });
+        }
       });
     }
   }

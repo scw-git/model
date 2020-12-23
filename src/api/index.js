@@ -26,5 +26,9 @@ export default {
   getTabs: params => http.get("/model/modelDatabase/getTabs", params),
   testDataBase: params => http.get("/model/modelDatabase/testDataBase", params),
   getSymbolList: params => http.get("/model/symbol/list", params),
-  startJob: params => http.post("/model/task/startJob", params)
+  startJob: params => http.post("/model/task/startJob", params),
+  pauseJob: params => http.post("/model/task/pauseJob", params),
+  resumeJob: params => http.post("/model/task/resumeJob", params),
+  deleteJob: params => http.post("/model/task/deleteJob", params),
+  modifyJobCron: params => http.post("/model/task/modifyJobCron", params)
 };
