@@ -6,6 +6,7 @@ export default {
   queryTypePageList: params => http.get("/model/model/type/page/list", params),
   deleteTypeById: params => http.delete("/model/model/type/delete", params),
   addTypeData: params => http.post("/model/model/type/insert", params),
+  updateTypeById: params => http.put("/model/model/type/update", params),
   getDimensionList: params =>
     http.get("/model/modelDimension/getDimensionList", params),
   delDimension: params =>
