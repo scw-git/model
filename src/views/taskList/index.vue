@@ -2,16 +2,8 @@
   <div class="task-list-wrap">
     <div class="table-search-header">
       <a-row class="header-row">
-        <a-col :span="16"> <span class="top-title">任务列表</span></a-col>
-        <a-col :span="8">
-          <div class="btn-list">
-            <a-button
-              type="primary"
-              style="background-color:#f7a54a;border:none"
-              @click="handleAdd"
-              ><a-icon type="plus" />新增</a-button
-            >
-          </div>
+        <a-col :span="4">
+          <a-button type="primary" @click="handleAdd">新增</a-button>
         </a-col>
       </a-row>
     </div>
@@ -61,14 +53,17 @@
         </a-table-column>
       </a-table>
     </div>
+    <taskModal ref="taskModal" @getDataList="getDataList" />
   </div>
 </template>
 <script>
+import taskModal from "./modal/taskModal";
 import {
   get_compute_status as computeStatus,
   compute_status as statusList
 } from "@/constant/status";
 export default {
+  components: { taskModal },
   data() {
     return {
       loading: false,
@@ -126,9 +121,7 @@ export default {
     handleReset() {},
     //新增按钮
     handleAdd() {
-      this.$router.push({
-        path: "/editModal"
-      });
+      this.$refs.taskModal.handleOpen();
     },
     //获取表格列表数据
     getDataList() {},
@@ -191,20 +184,4 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-.task-list-wrap {
-  .table-search-header {
-    .header-row {
-      border-left: 4px solid #c2c2c2;
-      background-color: #f5f5f5;
-      padding: 5px;
-      .top-title {
-        padding-top: 5px;
-        font-size: 18px;
-        color: #676a6c;
-        font-weight: 700;
-      }
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>

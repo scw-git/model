@@ -70,8 +70,17 @@ const routes = [
         path: "/indicatorsList/addIndicators",
         name: "/addIndicators",
         component: () => import("../views/indicatorsList/addIndicators")
+      },
+      {
+        path: "/dimension",
+        name: "dimension",
+        component: () => import("../views/dimension/index.vue")
+      },
+      {
+        path: "/dimensionCreateAndEdit",
+        name: "dimensionCreateAndEdit",
+        component: () => import("../views/dimension/createAndEdit.vue")
       }
-
       //下面这些还没有重新整理
       // {
       //   path: "/editModal",

@@ -22,7 +22,7 @@
 }
 // 表格
 .table-list-body{
-  padding:20px;
+  padding:0 10px;
   .table-op-link{
     a{
       margin-right: 10px;
@@ -32,4 +32,7 @@
       margin-right:0;
     }
   }
+}
+.mr10{
+  margin-right: 10px;
 }

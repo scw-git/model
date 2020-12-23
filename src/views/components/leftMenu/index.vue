@@ -6,22 +6,6 @@
       :selectedKeys="selKey"
       @click="handleClick"
     >
-      <a-menu-item key="/comAnalysis">
-        <a-icon type="calendar" />
-        组成分析
-      </a-menu-item>
-      <a-menu-item key="/factorAnalysis">
-        <a-icon type="calendar" />
-        因子分析
-      </a-menu-item>
-      <a-menu-item key="/entropyMethod">
-        <a-icon type="calendar" />
-        熵值法
-      </a-menu-item>
-      <a-menu-item key="/levelAnalysis">
-        <a-icon type="calendar" />
-        层次分析
-      </a-menu-item>
       <a-menu-item key="/taskList">
         <a-icon type="calendar" />
         任务列表
@@ -29,6 +13,10 @@
       <a-menu-item key="/indicatorsList">
         <a-icon type="calendar" />
         指标列表
+      </a-menu-item>
+      <a-menu-item key="/dimension">
+        <a-icon type="calendar" />
+        指标项
       </a-menu-item>
       <a-sub-menu key="/modType">
         <span slot="title"
@@ -52,11 +40,26 @@ export default {
       selKey: ["/comAnalysis"]
     };
   },
+  watch: {
+    $route(to) {
+      /*eslint no-console:[0]*/
+      if (to.path) {
+        this.selKey[0] = to.path;
+      }
+    }
+  },
+  created() {
+    this.getRouter();
+  },
   methods: {
+    getRouter() {
+      let router_path = this.$route.path;
+      if (router_path) {
+        this.selKey[0] = router_path;
+      }
+    },
     handleClick({ key }) {
       this.selKey = [key];
-      /*eslint no-console:0 */
-      // console.log("key", key);
       this.$router.push({
         path: key
       });
@@ -75,5 +78,8 @@ export default {
       background: #1890ff;
     }
   }
+}
+.ant-menu-dark .ant-menu-inline.ant-menu-sub {
+  background: #1b5b8c;
 }
 </style>

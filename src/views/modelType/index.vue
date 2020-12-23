@@ -40,16 +40,6 @@
                     {{ v.name }}
                   </a-select-option>
                 </a-select>
-
-                <!-- <a-checkbox-group v-model="searchForm.status">
-                  <a-checkbox
-                    :value="item.value"
-                    v-for="item in statusList"
-                    :key="item.value"
-                  >
-                    {{ item.label }}
-                  </a-checkbox>
-                </a-checkbox-group> -->
               </div>
             </div>
           </a-col>
@@ -202,29 +192,16 @@ export default {
     //获取表格列表数据
     getDataList() {
       //无搜索
-      if (this.searchForm.name === "" && this.searchForm.code === "") {
-        var params = {
-          pageNo: this.pagination.pageNow,
-          pageSize: this.pagination.pageSize
-        };
-      } else {
-        var params = {
-          pageSize: this.pagination.pageSize
-        };
-        if (this.searchForm.name !== "") params.name = this.searchForm.name;
-        if (this.searchForm.code !== "") params.code = this.searchForm.code;
-      }
-      this.$http.queryTypePageList({ params }).then(
-        res => {
-          if (res.code === 1) {
-            this.tableData = res.data.data.pageList;
-            this.pagination.total = res.data.data.totalCount;
-          }
-        },
-        err => {
-          return this.$message.error("获取不到列表数据");
+      let params = {
+        pageNo: this.pagination.pageNow,
+        pageSize: this.pagination.pageSize
+      };
+      this.$http.queryTypePageList({ params }).then(res => {
+        if (res.code === 1) {
+          this.tableData = res.data.data.pageList;
+          this.pagination.total = res.data.data.totalCount;
         }
-      );
+      });
     },
     //修改
     handleRowEdit(record) {
@@ -265,34 +242,24 @@ export default {
           let params = {
             id: id
           };
-          this.$http.deleteTypeById({ params }).then(
-            res => {
-              if (res.code === 1) {
-                this.$message.success("删除成功");
-                this.getDataList();
-              }
-            },
-            err => {
-              return this.$message.error("删除失败");
+          this.$http.deleteTypeById({ params }).then(res => {
+            if (res.code === 1) {
+              this.$message.success("删除成功");
+              this.getDataList();
             }
-          );
+          });
         },
         onCancel() {}
       });
     },
     //获取类型列表数据
     getTypeList() {
-      this.$http.queryTypeList().then(
-        res => {
-          /*eslint no-console:0 */
-          if (res.status === 1) {
-            this.typeData = res.data.data.list;
-          }
-        },
-        err => {
-          return this.$message.error("获取不到类型数据");
+      this.$http.queryTypeList().then(res => {
+        /*eslint no-console:0 */
+        if (res.status === 1) {
+          this.typeData = res.data.data.list;
         }
-      );
+      });
     },
     //选择类型改变事件
     handleTypeChange() {}

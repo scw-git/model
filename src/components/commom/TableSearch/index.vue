@@ -4,6 +4,7 @@
       :placeholder="placeholder"
       :style="style_search"
       @search="search"
+      @keyup.enter.native="search"
       v-model="model"
     />
   </div>

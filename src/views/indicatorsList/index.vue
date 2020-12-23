@@ -18,12 +18,7 @@
 
         <a-col :span="8">
           <div class="btn-list">
-            <a-button
-              style="background:#ffaa33;border-color:#ffaa33"
-              type="primary"
-              @click="handleAdd"
-              >+ 新增</a-button
-            >
+            <a-button type="primary" @click="handleAdd">新增</a-button>
           </div>
         </a-col>
       </a-row>

@@ -1,7 +1,7 @@
 <template>
   <div class="search-item">
     <span class="label">{{ label }}</span>
-    <a-radio-group v-model="model" @change="change">
+    <a-radio-group v-model="model" @change="change" style="line-height:32px;">
       <a-radio :value="item.value" v-for="item in options" :key="item.value">
         {{ item.label }}
       </a-radio>

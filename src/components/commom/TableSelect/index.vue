@@ -3,7 +3,8 @@
     <span class="label">{{ label }}</span>
     <a-select
       v-model="model"
-      style="width: 200px;display:block-inline;"
+      :mode="mode"
+      :style="styleSelect"
       @change="change"
     >
       <a-select-option v-for="item in options" :key="item.value">
@@ -25,20 +26,25 @@ export default {
       default: ""
     },
     value: {
-      type: [Number, String]
+      type: [Number, String, Array]
     },
     options: {
       type: Array,
       default: () => []
+    },
+    mode: {
+      type: String,
+      default: "default"
+    },
+    styleSelect: {
+      type: String,
+      default: "width: 200px;display:block-inline;"
     }
   },
   data() {
     return {};
   },
-  created() {
-    /*eslint no-console:[0]*/
-    console.log("value", this.value);
-  },
+  created() {},
   computed: {
     model: {
       get() {
