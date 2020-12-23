@@ -1,7 +1,7 @@
 <template>
   <div class="modalManage-add-view">
     <a-modal
-      title="新增页面"
+      :title="title"
       width="50%"
       :visible="visible"
       @cancel="onClose"
@@ -31,7 +31,7 @@
             <a-input
               placeholder="请输入类型编码(只能含有字母数字)"
               v-model="form.type"
-              :disabled="obj.enabled == 1 || obj.enabled == 0"
+              :disabled="form.id ? true : false"
               @blur="
                 () => {
                   $refs.type.onFieldBlur();
@@ -56,10 +56,17 @@
             style="text-align:center"
             :wrapper-col="{ span: 24 }"
           >
-            <a-button type="primary" @click="onSubmit">
+            <a-button v-if="this.form.id" type="primary" @click="onUpdateByid">
+              更新
+            </a-button>
+            <a-button v-else type="primary" @click="onSubmit">
               提交
             </a-button>
-            <a-button @click="resetForm">
+
+            <a-button v-if="this.form.id" @click="onClose">
+              关闭
+            </a-button>
+            <a-button v-else @click="resetForm">
               重置
             </a-button>
           </a-form-model-item>
@@ -70,9 +77,9 @@
 </template>
 <script>
 export default {
-  props: ["obj"],
   data() {
     return {
+      title: "",
       //抽屉显示与隐藏
       visible: false,
       //表单配置
@@ -90,9 +97,9 @@ export default {
         name: [
           { required: true, message: "请输入模型名称", trigger: "blur" },
           {
-            min: 3,
-            max: 5,
-            message: "Length should be 3 to 5",
+            min: 1,
+            max: 100,
+            message: "Length should be 1 to 100",
             trigger: "blur"
           }
         ],
@@ -109,12 +116,16 @@ export default {
     };
   },
   methods: {
-    //关闭对话框
-    handleClose() {
-      this.visible = false;
-    },
     //打开对话框
-    handleOpen() {
+    handleOpen(data) {
+      if (data) {
+        this.form = { ...data };
+        this.title = "修改";
+        this.form.enabled = data.enabled === 1 ? true : false;
+      } else {
+        this.title = "新增";
+        this.resetForm();
+      }
       this.visible = true;
     },
     //对话框关闭
@@ -134,6 +145,8 @@ export default {
           this.$http.addTypeData(params).then(res => {
             if (res.code === 1) {
               this.$message.success("添加成功");
+              this.$parent.getDataList(); //父组件重新获取数据
+
               this.resetForm();
             }
           });
@@ -142,19 +155,25 @@ export default {
         }
       });
     },
+    //更新操作
+    onUpdateByid() {
+      let params = {
+        id: this.form.id,
+        desc: this.form.desc,
+        name: this.form.name,
+        enabled: this.form.enabled ? 1 : 0
+      };
+      this.$http.updateTypeById(params).then(res => {
+        if (res.code === 1) {
+          this.$message.success("更新成功");
+          this.onClose(); //关闭弹窗
+          this.$parent.getDataList(); //父组件重新获取数据
+        }
+      });
+    },
     //表单重置
     resetForm() {
       this.$refs.ruleForm.resetFields();
-    }
-  },
-  watch: {
-    //获取到信息，表示是修改
-    obj() {
-      let editObj = this.obj;
-      this.form.name = editObj.name;
-      this.form.type = editObj.code;
-      this.form.desc = editObj.desc;
-      this.form.enable = editObj.enable === 1 ? true : false;
     }
   }
 };

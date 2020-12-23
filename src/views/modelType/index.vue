@@ -26,7 +26,6 @@
                 <a-select
                   placeholder="请选择类型"
                   style="width: 150px"
-                  @change="handleTypeChange"
                   v-model="searchForm.code"
                 >
                   <a-select-option value="">
@@ -57,7 +56,7 @@
               <a-button
                 type="primary"
                 style="background-color:#f7a54a;border:none"
-                @click="handleAdd"
+                @click="handleOpen"
                 ><a-icon type="plus" />新增</a-button
               >
             </div>
@@ -80,15 +79,30 @@
           }
         "
       >
-        <a-table-column title="序号" width="70px">
+        <a-table-column align="center" title="序号" width="70px">
           <template slot-scope="text, record, index">
             {{ ++index }}
           </template>
         </a-table-column>
-        <a-table-column title="分类名称" data-index="name" />
-        <a-table-column title="类型描述" data-index="desc" />
-        <a-table-column title="类型编码" data-index="code" />
-        <a-table-column title="状态" width="200px">
+        <a-table-column
+          title="分类名称"
+          align="center"
+          data-index="name"
+          width="200px"
+        />
+        <a-table-column
+          align="center"
+          title="类型描述"
+          data-index="desc"
+          width="200px"
+        />
+        <a-table-column
+          align="center"
+          title="类型编码"
+          data-index="code"
+          width="200px"
+        />
+        <a-table-column align="center" title="状态" width="200px">
           <template slot-scope="record">
             <!-- {{ record.status | computeStatus }} -->
             <a-switch
@@ -101,21 +115,21 @@
           </template>
         </a-table-column>
         <a-table-column
+          align="center"
           title="创建时间"
           width="250px"
           data-index="createTime"
         />
         <a-table-column
+          align="center"
           title="更新时间"
           width="250px"
           data-index="updateTime"
         />
-        <a-table-column key="action" title="操作" width="300px">
+        <a-table-column align="center" key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
-              <a href="javascript:;" @click="handleRowEdit(record)">修改</a>
-              <a href="javascript:;" @click="handleRowStart(record.id)">启用</a>
-              <a href="javascript:;" @click="handleRowStop(record.id)">停用</a>
+              <a href="javascript:;" @click="handleOpen(record)">修改</a>
               <a href="javascript:;" @click="handleRowDel(record.id)">删除</a>
             </div>
           </template>
@@ -123,7 +137,7 @@
       </a-table>
     </div>
     <!-- 新增对话框组件 -->
-    <addModal ref="addModal" :obj="obj"></addModal>
+    <addModal ref="addModal"></addModal>
   </div>
 </template>
 <script>
@@ -137,7 +151,7 @@ export default {
     return {
       //类型数据
       typeData: [],
-      obj: "", //点击修改按钮时传进子组件，让子组件获取获取信息
+      obj: {}, //点击修改按钮时传进子组件，让子组件获取获取信息
       //表格默认不加载
       loading: false,
       //表格无数据显示
@@ -176,7 +190,17 @@ export default {
     },
     //查询按钮
     handleSearch() {
-      this.getDataList();
+      let params = {
+        pageSize: this.pagination.pageSize
+      };
+      if (this.searchForm.name !== "") params.name = this.searchForm.name;
+      // if (this.searchForm.code !== "") params.code = this.searchForm.code;
+      this.$http.queryTypePageList({ params }).then(res => {
+        if (res.code === 1) {
+          this.tableData = res.data.data.pageList;
+          this.pagination.total = res.data.data.totalCount;
+        }
+      });
       this.pagination.pageNow = 1;
     },
     //重置按钮
@@ -184,14 +208,8 @@ export default {
       this.searchForm.code = "";
       this.searchForm.name = "";
     },
-    //新增按钮
-    handleAdd() {
-      //打开对话框
-      this.$refs.addModal.handleOpen();
-    },
     //获取表格列表数据
     getDataList() {
-      //无搜索
       let params = {
         pageNo: this.pagination.pageNow,
         pageSize: this.pagination.pageSize
@@ -204,34 +222,8 @@ export default {
       });
     },
     //修改
-    handleRowEdit(record) {
-      this.obj = record;
-      this.handleAdd();
-    },
-    //启用
-    handleRowStart(id) {
-      console.log(id);
-      this.$confirm({
-        title: "系统提示",
-        content: "确定启用吗?",
-        onOk() {
-          console.log(id);
-        },
-        onCancel() {}
-      });
-    },
-    //停用
-    handleRowStop(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-      this.$confirm({
-        title: "系统提示",
-        content: "确定停用吗?",
-        onOk() {
-          console.log(id);
-        },
-        onCancel() {}
-      });
+    handleOpen(record) {
+      this.$refs.addModal.handleOpen(record);
     },
     //删除
     handleRowDel(id) {
@@ -260,9 +252,7 @@ export default {
           this.typeData = res.data.data.list;
         }
       });
-    },
-    //选择类型改变事件
-    handleTypeChange() {}
+    }
   },
   created() {
     this.getTypeList();
