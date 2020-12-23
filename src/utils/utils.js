@@ -276,6 +276,43 @@ function customFilter(array, filter, field, context) {
 }
 
 /**
+ * 对于非constant文件夹中的格式化写在这里
+ * 非筛选类型
+ */
+function padLeftZero(str) {
+  return ("00" + str).substr(str.length);
+}
+
+// 时间格式化
+function formatDate(date, fmt) {
+  if (!date) return "";
+  date = new Date(date);
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(
+      RegExp.$1,
+      (date.getFullYear() + "").substr(4 - RegExp.$1.length)
+    );
+  }
+  let o = {
+    "y+": date.getFullYear(),
+    "M+": date.getMonth() + 1,
+    "d+": date.getDate(),
+    "h+": date.getHours(),
+    "m+": date.getMinutes(),
+    "s+": date.getSeconds()
+  };
+  for (let k in o) {
+    if (new RegExp(`(${k})`).test(fmt)) {
+      let str = o[k] + "";
+      fmt = fmt.replace(
+        RegExp.$1,
+        RegExp.$1.length === 1 ? str : padLeftZero(str)
+      );
+    }
+  }
+  return fmt;
+}
+/**
  * 根据传入值返回符合条件的所有项，返回的是扁平数组
  * @param {*} array 遍历的数组
  * @param {Function} 回调函数
@@ -326,5 +363,7 @@ export {
   getBreadcrumb,
   customFilterTrue,
   getBase64,
-  omitPhoneNum
+  omitPhoneNum,
+  padLeftZero,
+  formatDate
 };

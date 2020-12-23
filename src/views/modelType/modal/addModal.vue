@@ -56,10 +56,15 @@
             style="text-align:center"
             :wrapper-col="{ span: 24 }"
           >
-            <a-button v-if="this.form.id" type="primary" @click="onUpdateByid">
+            <a-button
+              v-if="this.form.id"
+              type="primary"
+              @click="onUpdateByid"
+              class="mr10"
+            >
               更新
             </a-button>
-            <a-button v-else type="primary" @click="onSubmit">
+            <a-button v-else type="primary" @click="onSubmit" class="mr10">
               提交
             </a-button>
 
@@ -124,12 +129,12 @@ export default {
         this.form.enabled = data.enabled === 1 ? true : false;
       } else {
         this.title = "新增";
-        this.resetForm();
       }
       this.visible = true;
     },
     //对话框关闭
     onClose() {
+      this.resetForm();
       this.visible = false;
     },
     //表单提交
@@ -146,7 +151,6 @@ export default {
             if (res.code === 1) {
               this.$message.success("添加成功");
               this.$parent.getDataList(); //父组件重新获取数据
-
               this.resetForm();
             }
           });

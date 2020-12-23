@@ -2,66 +2,17 @@
   <div class="model-management-wrap">
     <!-- 头部区域 -->
     <div class="table-search-header">
-      <a-row class="header-row">
-        <a-row>
-          <span class="top-title">模型分类</span>
-        </a-row>
-        <a-row>
-          <a-col :span="6">
-            <div class="search-item">
-              <span class="label">分类名称：</span>
-              <div class="val">
-                <a-input
-                  v-model="searchForm.name"
-                  placeholder="请输入模型名称"
-                  autocomplete="off"
-                ></a-input>
-              </div>
-            </div>
-          </a-col>
-          <a-col :span="10">
-            <div class="search-item">
-              <span class="label">类型：</span>
-              <div class="val">
-                <a-select
-                  placeholder="请选择类型"
-                  style="width: 150px"
-                  v-model="searchForm.code"
-                >
-                  <a-select-option value="">
-                    查询所有
-                  </a-select-option>
-                  <a-select-option
-                    v-for="(v, i) in typeData"
-                    :key="i + 'i'"
-                    :value="v.code"
-                  >
-                    {{ v.name }}
-                  </a-select-option>
-                </a-select>
-              </div>
-            </div>
-          </a-col>
-          <a-col :span="8">
-            <div class="btn-list">
-              <a-button type="primary" @click="handleSearch"
-                ><a-icon type="search" />查询</a-button
-              >
-              <a-button
-                type="primary"
-                style="background-color:#fff;color:#1c84c6"
-                @click="handleReset"
-                ><a-icon type="sync" />重置</a-button
-              >
-              <a-button
-                type="primary"
-                style="background-color:#f7a54a;border:none"
-                @click="handleOpen"
-                ><a-icon type="plus" />新增</a-button
-              >
-            </div>
-          </a-col>
-        </a-row>
+      <a-row>
+        <a-col :span="6">
+          <a-button type="primary" @click="handleAdd">新增</a-button>
+        </a-col>
+        <a-col :span="18">
+          <TableSearch
+            placeholder="请输入模型名称"
+            v-model="searchForm.name"
+            @handleSearch="handleSearch"
+          />
+        </a-col>
       </a-row>
     </div>
     <!-- 展示列表 -->
@@ -114,18 +65,16 @@
             />
           </template>
         </a-table-column>
-        <a-table-column
-          align="center"
-          title="创建时间"
-          width="250px"
-          data-index="createTime"
-        />
-        <a-table-column
-          align="center"
-          title="更新时间"
-          width="250px"
-          data-index="updateTime"
-        />
+        <a-table-column align="center" title="创建时间" width="250px">
+          <template slot-scope="record">
+            {{ record.createTime | formatDate("yyyy-MM-dd hh:mm:ss") }}
+          </template>
+        </a-table-column>
+        <a-table-column align="center" title="更新时间" width="250px">
+          <template slot-scope="record">
+            {{ record.updateTime | formatDate("yyyy-MM-dd hh:mm:ss") }}
+          </template>
+        </a-table-column>
         <a-table-column align="center" key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
@@ -141,6 +90,8 @@
   </div>
 </template>
 <script>
+import { formatDate } from "@/utils/utils.js";
+import TableSearch from "@/components/commom/TableSearch";
 import {
   get_compute_status as computeStatus,
   compute_status as statusList
@@ -175,10 +126,12 @@ export default {
     };
   },
   components: {
-    addModal
+    addModal,
+    TableSearch
   },
   filters: {
-    computeStatus
+    computeStatus,
+    formatDate
   },
   methods: {
     //分页改变
@@ -221,6 +174,9 @@ export default {
         }
       });
     },
+    handleAdd() {
+      this.$refs.addModal.handleOpen();
+    },
     //修改
     handleOpen(record) {
       this.$refs.addModal.handleOpen(record);
@@ -230,6 +186,8 @@ export default {
       this.$confirm({
         title: "系统提示",
         content: "确定删除吗?",
+        okText: "确定",
+        cancelText: "取消",
         onOk: () => {
           let params = {
             id: id

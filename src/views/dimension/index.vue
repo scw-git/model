@@ -33,7 +33,11 @@
         </a-table-column>
         <a-table-column title="名称" data-index="dms_name" />
         <a-table-column title="介绍" data-index="dms_desc" />
-        <a-table-column title="创建时间" data-index="crtime"> </a-table-column>
+        <a-table-column title="创建时间">
+          <template slot-scope="record">
+            {{ record.crtime | formatDate("yyyy-MM-dd hh:mm:ss") }}
+          </template>
+        </a-table-column>
         <a-table-column key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
@@ -47,6 +51,7 @@
   </div>
 </template>
 <script>
+import { formatDate } from "@/utils/utils.js";
 import TableSearch from "@/components/commom/TableSearch";
 export default {
   components: {
@@ -66,6 +71,9 @@ export default {
   },
   created() {
     this.getDataList();
+  },
+  filters: {
+    formatDate
   },
   methods: {
     handleRowDel(id) {
