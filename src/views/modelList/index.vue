@@ -2,59 +2,17 @@
   <div class="model-analysis-wrap">
     <!-- 头部区域 -->
     <div class="table-search-header">
-      <a-row class="header-row">
-        <a-row>
-          <span class="top-title">模型列表</span>
-        </a-row>
-        <a-row>
-          <a-col :span="6">
-            <div class="search-item">
-              <span class="label">模型名称：</span>
-              <div class="val">
-                <a-input
-                  v-model="searchForm.name"
-                  placeholder="请输入模型名称"
-                  autocomplete="off"
-                ></a-input>
-              </div>
-            </div>
-          </a-col>
-          <a-col :span="10">
-            <div class="search-item">
-              <span class="label">状态：</span>
-              <div class="val">
-                <a-checkbox-group v-model="searchForm.status">
-                  <a-checkbox
-                    :value="item.value"
-                    v-for="item in statusList"
-                    :key="item.value"
-                  >
-                    {{ item.label }}
-                  </a-checkbox>
-                </a-checkbox-group>
-              </div>
-            </div>
-          </a-col>
-          <a-col :span="8">
-            <div class="btn-list">
-              <a-button type="primary" @click="handleSearch"
-                ><a-icon type="search" />查询</a-button
-              >
-              <a-button
-                type="primary"
-                style="background-color:#fff;color:#1c84c6"
-                @click="handleReset"
-                ><a-icon type="sync" />重置</a-button
-              >
-              <a-button
-                type="primary"
-                style="background-color:#f7a54a;border:none"
-                @click="handleAdd"
-                ><a-icon type="plus" />新增</a-button
-              >
-            </div>
-          </a-col>
-        </a-row>
+      <a-row>
+        <a-col :span="6">
+          <a-button type="primary" @click="handleAdd">新增</a-button>
+        </a-col>
+        <a-col :span="18">
+          <TableSearch
+            placeholder="请输入模型名称"
+            v-model="searchForm.name"
+            @handleSearch="handleSearch"
+          />
+        </a-col>
       </a-row>
     </div>
     <!-- 展示列表 -->
@@ -78,20 +36,18 @@
           </template>
         </a-table-column>
         <a-table-column title="模型名称" data-index="name" />
-        <a-table-column title="类型编码" width="200px" data-index="typeCode" />
-        <a-table-column title="范围编码" width="200px" data-index="rangCode" />
         <a-table-column title="描述" width="200px" data-index="desc">
         </a-table-column>
-        <a-table-column
-          title="更新时间"
-          width="250px"
-          data-index="updateTime"
-        />
-        <a-table-column
-          title="创建时间"
-          width="250px"
-          data-index="createTime"
-        />
+        <a-table-column title="更新时间" width="150px">
+          <template slot-scope="record">
+            {{ record.updateTime | formatDate("yyyy-MM-dd hh:mm:ss") }}
+          </template>
+        </a-table-column>
+        <a-table-column title="创建时间" width="150px">
+          <template slot-scope="record">
+            {{ record.createTime | formatDate("yyyy-MM-dd hh:mm:ss") }}
+          </template>
+        </a-table-column>
         <a-table-column key="zhibiao" title="关联指标id" width="300px">
           <template slot-scope="record">
             {{ record.computerResultTable }}
@@ -100,28 +56,20 @@
         <a-table-column key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
-              <a href="javascript:;" @click="handleRowEdit(record.id)">修改</a>
-              <a href="javascript:;" @click="handleRowCal(record.id)">运算</a>
-              <a href="javascript:;" @click="handleRowExport(record.id)"
-                >导出运算结果</a
-              >
-              <a href="javascript:;" @click="handleRowStart(record.id)">启用</a>
-              <a href="javascript:;" @click="handleRowStop(record.id)">停用</a>
-              <a href="javascript:;" @click="handleRowDel(record.id)">删除</a>
+              <a @click="handleRowEdit(record)">修改</a>
+              <a @click="handleRowDel(record.id)">删除</a>
             </div>
           </template>
         </a-table-column>
       </a-table>
     </div>
-    <!-- 新增抽屉组件 -->
-    <addModal ref="addModal" :id="id"></addModal>
+    <addModal ref="addModal" @getDataList="getDataList" />
   </div>
 </template>
 <script>
-import {
-  get_compute_status as computeStatus,
-  compute_status as statusList
-} from "@/constant/status";
+import { formatDate } from "@/utils/utils.js";
+import TableSearch from "@/components/commom/TableSearch";
+import { compute_status as statusList } from "@/constant/status";
 import addModal from "@/views/modelList/modal/addModal";
 export default {
   data() {
@@ -145,15 +93,19 @@ export default {
       //搜素表单
       searchForm: {
         name: "",
-        status: []
+        typeCode: ""
       }
     };
   },
   components: {
-    addModal
+    addModal,
+    TableSearch
+  },
+  created() {
+    this.getDataList();
   },
   filters: {
-    computeStatus
+    formatDate
   },
   methods: {
     //分页改变
@@ -164,67 +116,61 @@ export default {
       }
     },
     //查询按钮
-    handleSearch() {},
+    handleSearch() {
+      this.pagination.pageNow = 1;
+      this.getDataList();
+    },
     //重置按钮
     handleReset() {},
     //新增按钮
     handleAdd() {
-      //打开抽屉
       this.$refs.addModal.handleOpen();
     },
     //获取表格列表数据
-    getDataList() {},
+    getDataList() {
+      const { pageNow, pageSize } = this.pagination;
+      let params = {
+        emulateJSON: true,
+        pageNo: pageNow,
+        pageSize
+      };
+      this.searchForm.name ? (params.name = this.searchForm.name) : "";
+      this.searchForm.typeCode
+        ? (params.typeCode = this.searchForm.typeCode)
+        : "";
+      this.$http.getModList({ params }).then(res => {
+        console.log("res123", res);
+        if (res.code == 1) {
+          this.tableData = res.data.data.pageList;
+          this.pagination.total = res.data.data.totalCount;
+        }
+      });
+    },
     //修改
-    handleRowEdit(id) {
-      this.id = id;
-      this.handleAdd();
-    },
-    //运算
-    handleRowCal(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-    },
-    //导出运算结果
-    handleRowExport(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-    },
-    //启用
-    handleRowStart(id) {
-      console.log(id);
-      this.$confirm({
-        title: "系统提示",
-        content: "确定启用吗?",
-        onOk() {
-          console.log(id);
-        },
-        onCancel() {}
-      });
-    },
-    //停用
-    handleRowStop(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-      this.$confirm({
-        title: "系统提示",
-        content: "确定停用吗?",
-        onOk() {
-          console.log(id);
-        },
-        onCancel() {}
-      });
+    handleRowEdit(data) {
+      this.$refs.addModal.handleOpen(data);
     },
     //删除
     handleRowDel(id) {
       /*eslint no-console:0 */
-      console.log(id);
+      let _this = this;
       this.$confirm({
         title: "系统提示",
         content: "确定删除吗?",
+        okText: "确定",
+        cancelText: "取消",
         onOk() {
-          console.log(id);
-        },
-        onCancel() {}
+          let params = {
+            id
+          };
+          _this.$http.deleteTarget({ params }).then(res => {
+            console.log("删除", res);
+            if (res.code == 1) {
+              _this.$message.success(res.msg);
+              _this.getDataList();
+            }
+          });
+        }
       });
     }
   }

@@ -134,7 +134,7 @@ export default {
       this.$router.push({
         path: "/dimensionCreateAndEdit",
         query: {
-          data: record
+          data: JSON.stringify(record)
         }
       });
     }

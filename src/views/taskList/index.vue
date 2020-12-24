@@ -1,9 +1,16 @@
 <template>
   <div class="task-list-wrap">
     <div class="table-search-header">
-      <a-row class="header-row">
-        <a-col :span="4">
+      <a-row>
+        <a-col :span="6">
           <a-button type="primary" @click="handleAdd">新增</a-button>
+        </a-col>
+        <a-col :span="18">
+          <TableSearch
+            placeholder="请输入模型名称"
+            v-model="title"
+            @handleSearch="handleSearch"
+          />
         </a-col>
       </a-row>
     </div>
@@ -14,7 +21,7 @@
         bordered
         :pagination="pagination"
         :locale="locale"
-        @change="value => changePag(value)"
+        @change="changePag"
         :rowKey="
           (record, index) => {
             return index;
@@ -23,34 +30,36 @@
       >
         <a-table-column title="序号" width="70px">
           <template slot-scope="text, record, index">
-            {{ ++index }}
+            {{ pagination.pageSize * (pagination.pageNow - 1) + index + 1 }}
           </template>
         </a-table-column>
-        <a-table-column title="模型名称" data-index="name" />
+        <a-table-column title="模型名称" data-index="jobName" />
         <a-table-column title="状态" width="200px">
           <template slot-scope="record">
-            {{ record.status | computeStatus }}
+            {{ record.status | taskStatus }}
           </template>
         </a-table-column>
         <a-table-column
           title="上一次运行时间"
           width="250px"
-          data-index="time"
+          data-index="lastRuntime"
         />
         <a-table-column key="action" title="操作" width="300px">
           <template slot-scope="record">
             <div class="table-op-link">
               <a @click="handleRowEdit(record)">修改</a>
-              <a @click="handleRowCal(record.id)">运算</a>
-              <a @click="handleRowExport(record.id)">导出运算结果</a>
-              <a @click="handleOperate(record.name, 'startJob', '启用')"
+              <a
+                @click="handleOperate(record.jobName, 'resumeJob', '启用')"
+                v-if="record.status == 'PAUSED'"
                 >启用</a
               >
-              <a @click="handleOperate(record.name, 'pauseJob', '暂停')"
-                >停用</a
+              <a
+                @click="handleOperate(record.jobName, 'pauseJob', '暂停')"
+                v-if="record.status == 'ACQUIRED' || record.status == 'WAITING'"
+                >暂停</a
               >
               <!-- <a href="javascript:;" @click="handleRowStop(record.name,'pauseJob')">停用</a> -->
-              <a @click="handleOperate(record.name, 'deleteJob', '删除')"
+              <a @click="handleOperate(record.jobName, 'deleteJob', '删除')"
                 >删除</a
               >
             </div>
@@ -62,43 +71,20 @@
   </div>
 </template>
 <script>
+import TableSearch from "@/components/commom/TableSearch";
 import taskModal from "./modal/taskModal";
 import {
-  get_compute_status as computeStatus,
+  get_task_status as taskStatus,
   compute_status as statusList
 } from "@/constant/status";
 export default {
-  components: { taskModal },
+  components: { taskModal, TableSearch },
   data() {
     return {
+      title: "",
       loading: false,
       locale: { emptyText: "暂无数据" },
-      tableData: [
-        {
-          id: 0,
-          name: "模型测试1",
-          status: 0,
-          time: "2020-12-15"
-        },
-        {
-          id: 1,
-          name: "模型测试2",
-          status: 1,
-          time: "2020-12-16"
-        },
-        {
-          id: 2,
-          name: "模型测试3",
-          status: 2,
-          time: "2020-12-16"
-        },
-        {
-          id: 3,
-          name: "模型测试4",
-          status: 3,
-          time: "2020-12-16"
-        }
-      ],
+      tableData: [],
       pagination: {
         pageNow: 1,
         pageSize: 10,
@@ -114,7 +100,10 @@ export default {
     };
   },
   filters: {
-    computeStatus
+    taskStatus
+  },
+  created() {
+    this.getDataList();
   },
   methods: {
     changePag(val) {
@@ -123,28 +112,36 @@ export default {
         this.getDataList();
       }
     },
-    handleReset() {},
-    //新增按钮
+    handleSearch() {
+      this.pagination.pageNow = 1;
+      this.getDataList();
+    },
     handleAdd() {
       this.$refs.taskModal.handleOpen();
     },
-    //获取表格列表数据
-    getDataList() {},
+    getDataList() {
+      const { pageNow, pageSize } = this.pagination;
+      let params = {
+        emulateJSON: true,
+        pageNow: String(pageNow),
+        pageSize: String(pageSize),
+        title: this.title
+      };
+      this.$http.getRiskList(params).then(res => {
+        /*eslint no-console:[0]*/
+        console.log("res", res);
+        if (res.data) {
+          this.tableData = res.data.list;
+        } else {
+          this.tableData = [];
+        }
+      });
+    },
     //修改
     handleRowEdit(data) {
       this.$refs.taskModal.handleOpen(data);
     },
-    //运算
-    handleRowCal(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-    },
-    //导出运算结果
-    handleRowExport(id) {
-      /*eslint no-console:0 */
-      console.log(id);
-    },
-    //启用
+    //启用/恢复/删除
     handleOperate(jobName, method, type) {
       let _this = this;
       _this.$confirm({
@@ -159,6 +156,10 @@ export default {
           };
           _this.$http[method](params).then(res => {
             console.log("res", res);
+            if (res.code == 1) {
+              _this.getDataList();
+              _this.$message.success(res.msg);
+            }
           });
         }
       });

@@ -31,10 +31,10 @@
             autocomplete="off"
           />
         </a-form-model-item>
-        <a-form-model-item prop="corn" label="时间设置" required>
+        <a-form-model-item prop="cron" label="时间设置" required>
           <a-input
             placeholder="请输入时间设置值"
-            v-model="ruleForm.corn"
+            v-model="ruleForm.cron"
             autocomplete="off"
           />
         </a-form-model-item>
@@ -72,13 +72,12 @@ export default {
   data() {
     return {
       title: "",
-      updatePhoneStatus: false,
       visible: false,
       ruleForm: {
         groupName: "",
         jobName: "",
         modelName: "",
-        corn: "",
+        cron: "",
         params: "",
         isEnable: ""
       },
@@ -92,30 +91,15 @@ export default {
   watch: {},
   created() {},
   methods: {
-    getVerCode() {
-      if (this.ruleForm.phone) {
-        let params = {
-          emulateJSON: true,
-          phone: this.ruleForm.phone
-        };
-        this.$http.validCodeSms(params).then(res => {
-          if (res.status == 200) {
-            this.$message.success(res.msg);
-          }
-        });
-      } else {
-        this.$message.error("请输入手机号");
-      }
-    },
     handleClose() {
       this.visible = false;
     },
     handleOpen(info) {
+      console.log(888, info);
       this.ruleForm = { ...info };
       this.title = info ? "修改任务" : "新增任务";
       this.ruleForm.groupName = "comlistallCount";
       this.visible = true;
-      this.updatePhoneStatus = false;
     },
     submitForm() {
       this.$refs.ruleForm.validate(valid => {
@@ -126,12 +110,12 @@ export default {
           };
           this.$http.startJob(params).then(res => {
             /*eslint no-console:[0]*/
-            console.log(888, res);
-            // if (res.code == 1) {
-            //   this.$message.success(res.msg);
-            //   this.$emit("getDataList");
-            //   this.handleClose();
-            // }
+
+            if (res.code == 1) {
+              this.$message.success(res.msg);
+              this.$emit("getDataList");
+              this.handleClose();
+            }
           });
         } else {
           return false;

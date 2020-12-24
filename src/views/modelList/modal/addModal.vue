@@ -1,8 +1,13 @@
 <template>
   <div class="modal-add-view">
-    <a-drawer title="新增页面" width="50%" :visible="visible" @close="onClose">
-      <!-- 第一层抽屉内容 -->
-      <!-- 表单区域 -->
+    <!-- <a-drawer title="新增页面" width="50%" :visible="visible" @close="onClose"> -->
+    <a-modal
+      :title="title"
+      :footer="null"
+      @cancel="handleClose"
+      v-model="visible"
+      width="60%"
+    >
       <a-row>
         <a-form-model
           ref="ruleForm"
@@ -11,37 +16,38 @@
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
-          <a-form-model-item ref="modelName" label="名称" prop="modelName">
-            <a-input
-              placeholder="请输入模型名称"
-              v-model="form.modelName"
-              @blur="
-                () => {
-                  $refs.modelName.onFieldBlur();
-                }
-              "
-            />
+          <a-form-model-item ref="name" label="名称" prop="name">
+            <a-input placeholder="请输入模型名称" v-model="form.name" />
           </a-form-model-item>
-          <a-form-model-item label="类型" prop="type">
-            <a-radio-group v-model="form.type">
-              <a-radio value="1">
-                类型一
-              </a-radio>
-              <a-radio value="2">
-                类型二
-              </a-radio>
-            </a-radio-group>
+          <a-form-model-item label="类型" prop="typeCode">
+            <a-select v-model="form.typeCode" placeholder="请选择类型">
+              <a-select-option
+                :value="item.code"
+                v-for="(item, index) in typeList"
+                :key="index"
+              >
+                {{ item.name }}
+              </a-select-option>
+            </a-select>
           </a-form-model-item>
 
           <a-form-model-item label="描述" prop="desc">
             <a-input v-model="form.desc" type="textarea" />
           </a-form-model-item>
-          <a-form-model-item :wrapper-col="{ span: 20, offset: 4 }">
-            <!-- 关联按钮，打开出第二层抽屉 -->
-            <a-button @click="showChildrenDrawer">
-              关联字段
+          <a-form-model-item label="指标" v-if="title == '修改'">
+            <div>
+              <a-tag color="orange" v-for="(v, i) in getCheckedList" :key="i">
+                {{ v.targetName + "_" + v.desc }}
+              </a-tag>
+            </div>
+          </a-form-model-item>
+          <a-form-model-item
+            :wrapper-col="{ span: 20, offset: 4 }"
+            v-if="title == '新增'"
+          >
+            <a-button @click="showDrawer">
+              关联指标
             </a-button>
-            <!-- 已经提交字段区域 -->
             <a-row
               style="
                     margin-top: 20px;
@@ -58,10 +64,10 @@
                   color="orange"
                   closable
                   v-for="(v, i) in checkedList"
-                  :key="v + i + ''"
+                  :key="i"
                   @close="tagClose(v)"
                 >
-                  {{ v }}
+                  {{ v.targetName + "_" + v.desc }}
                 </a-tag>
               </div>
             </a-row>
@@ -71,40 +77,19 @@
             style="text-align:center"
             :wrapper-col="{ span: 24 }"
           >
-            <a-button type="primary" @click="onSubmit">
+            <a-button type="primary" @click="onSubmit()" class="mr10">
               提交
             </a-button>
-            <a-button @click="resetForm">
-              重置
+            <a-button @click="handleClose">
+              取消
             </a-button>
           </a-form-model-item>
         </a-form-model>
       </a-row>
 
       <!-- 第二层抽屉组件 -->
-      <relevanceModal
-        ref="relevanceModal"
-        :checkedList="checkedList"
-      ></relevanceModal>
-      <!-- 底部区域 -->
-      <div
-        :style="{
-          position: 'absolute',
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e8e8e8',
-          padding: '10px 16px',
-          textAlign: 'right',
-          left: 0,
-          background: '#fff',
-          borderRadius: '0 0 4px 4px'
-        }"
-      >
-        <a-button type="primary" style="marginRight: 8px" @click="onClose">
-          关闭
-        </a-button>
-      </div>
-    </a-drawer>
+      <relevanceModal ref="relevanceModal" @getSel="getSel"></relevanceModal>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -113,34 +98,28 @@ export default {
   props: ["id"],
   data() {
     return {
+      title: "",
       //抽屉显示与隐藏
       visible: false,
-      //关联字段
+      typeList: [],
+      getCheckedList: [],
       checkedList: [],
       //表单配置
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
       //表单提交字段
       form: {
-        modelName: "",
-        type: "",
+        name: "",
+        typeCode: "",
         desc: ""
       },
       //表单校验规则
       rules: {
-        modelName: [
-          { required: true, message: "请输入模型名称", trigger: "blur" },
-          {
-            min: 3,
-            max: 5,
-            message: "Length should be 3 to 5",
-            trigger: "blur"
-          }
-        ],
-        type: [
+        name: [{ required: true, message: "请输入模型名称", trigger: "blur" }],
+        typeCode: [
           {
             required: true,
-            message: "Please select activity type",
+            message: "请输入编码",
             trigger: "change"
           }
         ],
@@ -152,30 +131,77 @@ export default {
     relevanceModal
   },
   methods: {
-    //关闭抽屉
+    getTypeList() {
+      this.$http.getTypeList({}).then(res => {
+        if (res.code === 1) {
+          this.typeList = res.data.data.list;
+        }
+      });
+    },
+    getCheckedListFn(infoId) {
+      let params = {
+        infoId
+      };
+      this.$http.getTarget({ params }).then(res => {
+        console.log("res", res);
+        if (res.code === 1) {
+          this.getCheckedList = res.data.data;
+        }
+      });
+    },
+    getSel(data) {
+      /*eslint no-console:[0]*/
+      console.log(333, data);
+      this.checkedList = data;
+    },
+    //关闭弹窗
     handleClose() {
       this.visible = false;
     },
-    //打开抽屉
-    handleOpen() {
+    // 打开弹窗
+    handleOpen(data) {
       this.visible = true;
-    },
-    //抽屉关闭
-    onClose() {
-      this.visible = false;
+      this.getTypeList();
+      if (!data) {
+        this.form = {};
+        this.title = "新增";
+      } else {
+        console.log("data", data);
+        this.form = { ...data };
+        this.title = "修改";
+        this.getCheckedListFn(data.id);
+      }
     },
     //打开关联抽屉
-    showChildrenDrawer() {
+    showDrawer() {
       this.$refs.relevanceModal.handleOpen();
     },
     //表单提交
     onSubmit() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
+          const { name, typeCode, desc, id } = this.form;
+          let params = {
+            name,
+            typeCode,
+            desc
+          };
+          this.title == "修改" ? (params.id = id) : "";
+          let checkedList = this.checkedList.map(v => {
+            return v.id;
+          });
+          this.title == "新增"
+            ? (params.targetIds = checkedList.join(","))
+            : "";
+          let method = this.title == "新增" ? "insertMod" : "updateTarget";
+          this.$http[method](params).then(res => {
+            console.log("res", res);
+            if (res.code === 1) {
+              this.$message.success(res.msg);
+              this.handleClose();
+              this.$emit("getDataList");
+            }
+          });
         }
       });
     },
@@ -190,16 +216,7 @@ export default {
       if (index >= 0) this.checkedList.splice(index, 1);
       console.log(this.checkedList);
     }
-  },
-  watch: {
-    //获取到信息，表示是修改
-    id() {
-      console.log("子组件" + this.id);
-    }
   }
 };
 </script>
-<style lang="scss">
-.modal-add-view {
-}
-</style>
+<style lang="scss"></style>

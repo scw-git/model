@@ -1,20 +1,11 @@
 <template>
   <div class="factorAnalysisEdit">
-    <div class="header">
-      <!-- <a-row>
-        <a-col :span="6" style="font-weight: 700">维度编辑</a-col>
-        <a-col :span="18" align="right">
-          <a-button type="primary" style="margin-right: 30px" @click="back"
-            >返回</a-button
-          >
-        </a-col>
-      </a-row> -->
-    </div>
+    <div class="header"></div>
     <div class="steps">
       <a-steps :current="current" @change="onChange">
-        <a-step title="Step 1" description="维度基本信息" />
-        <a-step title="Step 2" description="数据源设置" />
-        <a-step title="Step 3" description="维度计算公式" />
+        <a-step title="步骤1" description="指标项基本信息" />
+        <a-step title="步骤2" description="数据源设置" />
+        <a-step title="步骤3" description="指标项计算公式" />
       </a-steps>
     </div>
     <div class="content">
@@ -28,24 +19,21 @@
         <div class="step1" v-show="current == 0">
           <a-form-model-item
             has-feedback
-            label="维度名称"
+            label="指标项名称"
             prop="dms_name"
             ref="dms_name"
           >
             <a-input
               v-model="form.dms_name"
-              placeholder="维度名称"
-              @blur="
-                () => {
-                  $refs.dms_name.onFieldBlur();
-                }
-              "
+              placeholder="指标项名称"
+              :disabled="Boolean($route.query.data)"
+              @blur="onBlurDmsname"
             ></a-input>
           </a-form-model-item>
-          <a-form-model-item label="维度介绍">
+          <a-form-model-item label="指标项介绍">
             <a-input
               type="textarea"
-              placeholder="请输入维度介绍"
+              placeholder="请输入指标项介绍"
               :auto-size="{ minRows: 5, maxRows: 15 }"
               v-model="form.dms_desc"
             ></a-input>
@@ -55,11 +43,11 @@
           </a-form-model-item>
         </div>
         <div class="step2" v-show="current == 1">
-          <a-form-model-item label="数据库" prop="dataBase">
+          <a-form-model-item label="数据库" prop="database_id">
             <a-select
               placeholder="请选择数据库"
-              v-model="form.dataBase"
-              @change="getTabs(form.dataBase)"
+              v-model="form.database_id"
+              @change="getTabs"
             >
               <a-select-option
                 :value="item.id"
@@ -70,9 +58,9 @@
             </a-select>
           </a-form-model-item>
           <a-form-model-item label="数据源类型" prop="dataBaseType">
-            <a-radio-group v-model="form.dataBaseType">
-              <a-radio value="1">表</a-radio>
-              <a-radio value="2">字段</a-radio>
+            <a-radio-group v-model="form.database_type">
+              <a-radio :value="0">表</a-radio>
+              <a-radio :value="1">字段</a-radio>
             </a-radio-group>
           </a-form-model-item>
           <a-form-model-item label="数据表名称" prop="tb_name">
@@ -138,7 +126,6 @@
               >上一步</a-button
             >
             <a-button type="primary" @click="onSubmit">提交</a-button>
-            <!-- <a-button @click="back">取消</a-button> -->
           </a-form-model-item>
         </div>
       </a-form-model>
@@ -160,8 +147,8 @@ export default {
       form: {
         dms_name: "",
         dms_desc: "",
-        dataBase: "",
-        dataBaseType: "1",
+        database_id: "",
+        database_type: 0,
         tb_name: "",
         fieldsName: "",
         self_calc: ""
@@ -170,7 +157,7 @@ export default {
         dms_name: [
           { required: true, message: "维度名称不能为空！！", trigger: "blur" }
         ],
-        dataBase: [
+        database_id: [
           { required: true, message: "请选择数据库！！", trigger: "change" }
         ],
         dataBaseType: [
@@ -195,25 +182,35 @@ export default {
   created() {
     this.getDataBaseList();
     this.getSymbolList();
-    if (this.$route.query.data) {
-      this.initData(this.$route.query.data);
-      console.log(this.$route.query.data);
-    }
+    this.$route.query.data
+      ? (this.form = { ...JSON.parse(this.$route.query.data) })
+      : "";
   },
   methods: {
-    initData(data) {
-      this.form = { ...data };
+    // 检查维度名称是否重复
+    onBlurDmsname() {
+      let params = {
+        dmsName: this.form.dms_name
+      };
+      this.$http.checkByName({ params }).then(res => {
+        console.log(888, res);
+        if (res.data === true) {
+          this.$message.error("该维度名称已存在,请重新输入！");
+          this.form.dms_name = "";
+        }
+      });
     },
     getSymbolList() {
       this.$http.getSymbolList().then(res => {
         /*eslint no-console:[0]*/
-        console.log("res123", res);
         if (res.code === 1) {
           this.symbolList = res.data;
         }
       });
     },
     getTabs(id) {
+      let i = this.dataBaseList.findIndex(item => item.id === id);
+      this.form.database_name = this.dataBaseList[i].name;
       let params = {
         id
       };
@@ -225,7 +222,7 @@ export default {
     },
     getFields(tbname) {
       let params = {
-        id: this.form.dataBase,
+        id: this.form.database_id,
         tbname
       };
       this.$http.getFields({ params }).then(res => {
@@ -238,6 +235,7 @@ export default {
       this.$http.getDataBaseList().then(res => {
         if (res.code === 1) {
           this.dataBaseList = res.data;
+          console.log("dataBaseList2", this.dataBaseList, this.form);
         }
       });
     },
@@ -249,16 +247,14 @@ export default {
           if (!err) this.current = current;
         });
       } else if (current == 2) {
-        //校验前两个步骤的所有字段
         let errNum = 0;
         let arr = [
           "dms_name",
-          "dataBase",
-          "dataBaseType",
+          "database_id",
+          "database_type",
           "tb_name",
           "fieldsName"
         ];
-        //校验成功也会执行，但什么都不返回，错误会返回字符串
         this.$refs.ruleForm.validateField(arr, err => {
           if (err) errNum++;
         });
@@ -272,11 +268,13 @@ export default {
             emulateJSON: true,
             ...this.form
           };
-          this.$http.addDimension(params).then(res => {
-            /*eslint no-console:[0]*/
+          let method = this.$route.query.data
+            ? "updateDimension"
+            : "addDimension";
+          this.$http[method](params).then(res => {
             console.log("res1299", res);
             if (res.code === 1) {
-              this.$message.success("新增成功");
+              this.$message.success(res.msg);
               this.$router.push({
                 path: "/dimension"
               });

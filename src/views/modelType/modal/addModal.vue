@@ -69,7 +69,7 @@
             </a-button>
 
             <a-button v-if="this.form.id" @click="onClose">
-              关闭
+              取消
             </a-button>
             <a-button v-else @click="resetForm">
               重置
@@ -152,7 +152,7 @@ export default {
             if (res.code === 1) {
               this.$message.success("添加成功");
               this.$parent.getDataList(); //父组件重新获取数据
-              this.resetForm();
+              this.onClose();
             }
           });
         } else {
@@ -178,7 +178,7 @@ export default {
     },
     //表单重置
     resetForm() {
-      this.$refs.ruleForm.resetFields();
+      this.form = {};
     }
   }
 };

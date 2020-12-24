@@ -125,7 +125,7 @@ instance.interceptors.response.use(
       return response;
     }
     const { data: dataBody } = response;
-    // console.log("dataBody", dataBody);
+    console.log("dataBody", dataBody);
     /*eslint no-console:0 */
 
     if (

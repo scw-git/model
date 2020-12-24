@@ -30,5 +30,16 @@ export default {
   pauseJob: params => http.post("/model/task/pauseJob", params),
   resumeJob: params => http.post("/model/task/resumeJob", params),
   deleteJob: params => http.post("/model/task/deleteJob", params),
-  modifyJobCron: params => http.post("/model/task/modifyJobCron", params)
+  modifyJobCron: params => http.post("/model/task/modifyJobCron", params),
+  getRiskList: params => http.post("/model/task/list", params),
+  showAllTarget: params => http.post("/model/target/showAllTarget", params),
+  delTarget: params => http.get("/model/target/delTarget", params),
+  addTarget: params => http.get("/model/target/addTarget", params),
+  getModList: params => http.get("/model/model/info/page/list", params),
+  insertMod: params => http.post("/model/model/info/insert", params),
+  getTarget: params => http.get("/model/model/info/getTarget", params),
+  deleteTarget: params => http.delete("/model/model/info/delete", params),
+  updateTarget: params => http.put("/model/model/info/update", params),
+  getRangCode: params => http.get("/model/model/info/getRangCode", params),
+  getTypeList: params => http.get("/model/model/type/list", params)
 };

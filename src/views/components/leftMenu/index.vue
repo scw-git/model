@@ -6,17 +6,13 @@
       :selectedKeys="selKey"
       @click="handleClick"
     >
-      <a-menu-item key="/taskList">
+      <a-menu-item key="/dimension">
         <a-icon type="calendar" />
-        任务列表
+        指标项
       </a-menu-item>
       <a-menu-item key="/indicatorsList">
         <a-icon type="calendar" />
         指标列表
-      </a-menu-item>
-      <a-menu-item key="/dimension">
-        <a-icon type="calendar" />
-        指标项
       </a-menu-item>
       <a-sub-menu key="/modType">
         <span slot="title"
@@ -30,6 +26,10 @@
           模型列表
         </a-menu-item>
       </a-sub-menu>
+      <a-menu-item key="/taskList">
+        <a-icon type="calendar" />
+        任务列表
+      </a-menu-item>
     </a-menu>
   </div>
 </template>
@@ -37,7 +37,7 @@
 export default {
   data() {
     return {
-      selKey: ["/comAnalysis"]
+      selKey: ["/dimension"]
     };
   },
   watch: {

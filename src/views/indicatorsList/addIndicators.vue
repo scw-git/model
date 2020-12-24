@@ -35,11 +35,11 @@
         v-for="(domain, index) in dynamicValidateForm.domains"
         :key="domain.key"
         v-bind="index === 0 ? formItemLayout : formItemLayoutWithOutLabel"
-        :label="index === 0 ? '请选择您要计算的维度' : ''"
+        :label="index === 0 ? '请选择您要计算的指标项' : ''"
         :prop="'domains.' + index + '.value'"
         :rules="{
           required: true,
-          message: '维度不能为空！',
+          message: '指标项不能为空！',
           trigger: 'blur'
         }"
       >
@@ -49,19 +49,19 @@
           @change="handleChange"
           placeholder="please select your zone"
         >
-          <a-select-option value="维度1">
+          <a-select-option value="指标项1">
             Zone one
           </a-select-option>
-          <a-select-option value="维度2">
+          <a-select-option value="指标项2">
             Zone two
           </a-select-option>
-          <a-select-option value="维度3">
+          <a-select-option value="指标项3">
             Zone two
           </a-select-option>
-          <a-select-option value="维度4">
+          <a-select-option value="指标项4">
             Zone two
           </a-select-option>
-          <a-select-option value="维度5">
+          <a-select-option value="指标项5">
             Zone two
           </a-select-option>
         </a-select>
@@ -81,7 +81,7 @@
         </a-button>
       </a-form-model-item>
       <a-divider orientation="left" style="color:#18a689">
-        计算公式 : 维度*权重
+        计算公式 : 指标项*权重
       </a-divider>
       <a-form-model-item>
         <a-card style="width:100%;margin:20px auto;">
@@ -94,7 +94,7 @@
               >{{ item }}</a-tag
             >
             <span style="margin-left:50px">输入示例：</span>
-            <span>维度1*0.1+维度2*0.3+维度3</span>
+            <span>指标项1*0.1+指标项2*0.3+指标项3</span>
           </div>
 
           <a-input
