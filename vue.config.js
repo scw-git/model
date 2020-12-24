@@ -7,8 +7,8 @@ const IS_PROD = ["production", "prod"].includes(Env);
 process.env.VUE_APP_TITLE = "东盟-企业征信平台";
 
 const vue_conf = {
-  publicPath: "/gx_modelplat/", // 部署应用包时的URL前缀
-  // publicPath: "./",
+  // publicPath: process.env.BASE_URL, // 部署应用包时的URL前缀
+  publicPath: "./", //mode为hash模式
   outputDir: "dist", // 构建目录
   indexPath: "index.html", // 指定生成的 index.html 的输出路径
   filenameHashing: true, // 静态文件生成hash名称
