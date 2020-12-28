@@ -55,7 +55,7 @@ import { formatDate } from "@/utils/utils.js";
 import TableSearch from "@/components/commom/TableSearch";
 export default {
   components: {
-    TableSearch
+    TableSearch,
   },
   data() {
     return {
@@ -65,15 +65,15 @@ export default {
         pageNum: 1,
         pageSize: 10,
         total: 0,
-        showTotal: total => `共有 ${total}条`
-      }
+        showTotal: (total) => `共有 ${total}条`,
+      },
     };
   },
   created() {
     this.getDataList();
   },
   filters: {
-    formatDate
+    formatDate,
   },
   methods: {
     handleRowDel(id) {
@@ -86,9 +86,9 @@ export default {
         onOk() {
           //发起删除请求
           let params = {
-            id
+            id,
           };
-          _this.$http.delDimension({ params }).then(res => {
+          _this.$http.delDimension({ params }).then((res) => {
             if (res.code === 1) {
               _this.$message.success(res.msg);
               _this.getDataList();
@@ -96,7 +96,7 @@ export default {
               _this.$message.error(res.msg);
             }
           });
-        }
+        },
       });
     },
     changePag(val) {
@@ -111,19 +111,20 @@ export default {
       let params = {
         pageNum,
         pageSize,
-        searchKey: this.searchValue
+        searchKey: this.searchValue,
       };
-      this.$http.getDimensionList({ params }).then(res => {
+      this.$http.getDimensionList({ params }).then((res) => {
         /*eslint no-console:[0]*/
         if (res.code === 1) {
           this.tableData = res.data.list;
           this.pagination.total = res.data.total;
+          // console.log(res);
         }
       });
     },
     handleAdd() {
       this.$router.push({
-        path: "/dimensionCreateAndEdit"
+        path: "/dimensionCreateAndEdit",
       });
     },
     handleSearch() {
@@ -134,11 +135,11 @@ export default {
       this.$router.push({
         path: "/dimensionCreateAndEdit",
         query: {
-          data: JSON.stringify(record)
-        }
+          data: JSON.stringify(record),
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

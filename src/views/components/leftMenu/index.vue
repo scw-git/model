@@ -1,11 +1,6 @@
 <template>
   <div class="left-menu-list">
-    <a-menu
-      mode="inline"
-      theme="dark"
-      :selectedKeys="selKey"
-      @click="handleClick"
-    >
+    <a-menu mode="inline" theme="dark" :selectedKeys="selKey" @click="handleClick">
       <a-menu-item key="/dimension">
         <a-icon type="calendar" />
         指标项
@@ -15,12 +10,8 @@
         指标列表
       </a-menu-item>
       <a-sub-menu key="/modType">
-        <span slot="title"
-          ><a-icon type="appstore" /><span>模型管理</span></span
-        >
-        <a-menu-item key="/modType">
-          <a-icon type="calendar" /> 模型分类
-        </a-menu-item>
+        <span slot="title"><a-icon type="appstore" /><span>模型管理</span></span>
+        <a-menu-item key="/modType"> <a-icon type="calendar" /> 模型分类 </a-menu-item>
         <a-menu-item key="/modList">
           <a-icon type="calendar" />
           模型列表
@@ -37,7 +28,7 @@
 export default {
   data() {
     return {
-      selKey: ["/dimension"]
+      selKey: ["/dimension"],
     };
   },
   watch: {
@@ -46,7 +37,7 @@ export default {
       if (to.path) {
         this.selKey[0] = to.path;
       }
-    }
+    },
   },
   created() {
     this.getRouter();
@@ -54,17 +45,21 @@ export default {
   methods: {
     getRouter() {
       let router_path = this.$route.path;
+      console.log("this.$route.path", this.$route.path);
       if (router_path) {
         this.selKey[0] = router_path;
       }
     },
-    handleClick({ key }) {
+    handleClick({ item, key, keyPath }) {
+      // console.log("item", item);
+      // console.log("key", key);
+      // console.log("keypath", keyPath);
       this.selKey = [key];
       this.$router.push({
-        path: key
+        path: key,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">

@@ -20,7 +20,7 @@ const routes = [
     path: "/index",
     name: "index",
     component: () => import("../views/index"),
-    redirect: "/comAnalysis",
+    redirect: "/dimension",
     children: [
       {
         path: "/taskList",
